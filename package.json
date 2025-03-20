@@ -1,0 +1,30 @@
+{
+  "name": "tool-tip",
+  "version": "1.0.4",
+  "main": "dist/tool-tip.umd.js",
+  "module": "dist/tool-tip.esm.js",
+  "types": "types/index.d.ts",
+  "type": "module",
+  "files": [
+      "dist",
+      "types"
+  ],
+  "keywords": ["tooltip", "ui", "javascript"],
+  "scripts": {
+      "build": "rollup -c",
+      "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+      "@rollup/plugin-node-resolve": "^15.2.3",
+      "rollup": "^4.18.0",
+      "rollup-plugin-copy": "^3.5.0"
+  },
+  "sideEffects": false,
+  "exports": {
+      ".": {
+          "import": "./dist/tool-tip.esm.js",
+          "require": "./dist/tool-tip.umd.js"
+      },
+      "./assets/*": "./dist/assets/*"
+  }
+}
