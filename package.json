@@ -1,18 +1,18 @@
 {
-    "name": "tool-tip",
+    "name": "atip",
     "version": "1.0.0",
-    "main": "dist/tool-tip.umd.js",
-    "module": "dist/tool-tip.esm.js",
+    "main": "dist/atip.umd.js",
+    "module": "dist/atip.esm.js",
     "files": [
         "dist"
     ],
     "keywords": [
-        "tooltip",
+        "atip",
         "ui",
         "javascript"
     ],
     "scripts": {
-        "build": "rollup -c && cp src/styles.css dist/tooltip.css",
+        "build": "rollup -c && cp src/styles.css dist/atip.css",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {

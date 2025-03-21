@@ -5,12 +5,12 @@ export default {
   input: 'src/core.js',
   output: [
     {
-      file: 'dist/tool-tip.umd.js',
+      file: 'dist/atip.umd.js',
       format: 'umd',
-      name: 'Tooltip'
+      name: 'Atip'
     },
     {
-      file: 'dist/tool-tip.esm.js',
+      file: 'dist/atip.esm.js',
       format: 'esm'
     }
   ],
