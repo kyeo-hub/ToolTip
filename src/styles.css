@@ -1,0 +1,85 @@
+/* 默认主题（dark） */
+.tooltip-light {
+    background: #333;
+    color: white;
+}
+
+/* light主题 */
+.tooltip-dark {
+    background: #fff;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 公共样式 */
+.tooltip {
+    position: absolute;
+    z-index: 9999;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    max-width: 300px;
+    animation: tooltipFadeIn 0.2s ease-out;
+}
+
+
+
+/* 箭头样式 */
+.tooltip::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    transform: rotate(45deg);
+}
+
+/* 根据主题调整箭头颜色 */
+.tooltip-light::after {
+    background: #333;
+}
+
+.tooltip-dark::after {
+    background: #fff;
+}
+
+/* 位置调整 */
+.tooltip[data-position='bottom']::after {
+    top: -4px;
+    left: 50%;
+}
+
+.tooltip[data-position='top']::after {
+    bottom: -4px;
+    left: 50%;
+}
+
+/* 新增left/right方向 */
+.tooltip[data-position='left']::after {
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.tooltip[data-position='right']::after {
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+}
+
+/* 添加位置调整时的箭头动画 */
+.tooltip::after {
+    transition: all 0.2s ease;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
