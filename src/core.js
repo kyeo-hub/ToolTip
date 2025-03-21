@@ -11,9 +11,10 @@ class TooltipLibrary {
       theme: 'dark',
       ...options,
     };
-
+    this.applyTheme(); // 新增初始化主题应用
     this.tooltip = null;
     this.init();
+
   }
 
   init() {
@@ -50,7 +51,29 @@ class TooltipLibrary {
       }
     });
   }
+
+  // 新增主题应用方法
+  applyTheme() {
+    const theme = this.config.theme;
+    this.tooltip.classList.remove('tooltip-dark', 'tooltip-light');
+    this.tooltip.classList.add(`tooltip-${theme}`);
+    
+    // 同步data属性给CSS使用
+    this.tooltip.dataset.theme = theme;
+  }
+  // 新增主题切换方法
+  setTheme(newTheme) {
+    this.config.theme = newTheme;
+    this.applyTheme();
+  }
   showTooltip(target) {
+    // 在显示前检查元素级主题覆盖
+    const elementTheme = target.getAttribute(`${this.config.attribute}-theme`);
+    if (elementTheme) {
+      this.tooltip.dataset.theme = elementTheme;
+    } else {
+      this.applyTheme(); // 恢复全局主题
+    }
     const position =
       target.getAttribute(`${this.config.attribute}-position`) ||
       this.config.position;

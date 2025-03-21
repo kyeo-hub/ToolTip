@@ -1,44 +1,46 @@
-/* 默认主题（dark） */
-.tooltip-light {
-    background: #333;
-    color: white;
-}
-
-/* light主题 */
-.tooltip-dark {
-    background: #fff;
-    color: #333;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* 公共样式 */
+/* 基础样式 */
 .tooltip {
     position: absolute;
-    z-index: 9999;
     padding: 8px 12px;
     border-radius: 4px;
     font-size: 14px;
+    line-height: 1.4;
+    pointer-events: none;
+    transition: opacity 0.2s;
     max-width: 300px;
-    animation: tooltipFadeIn 0.2s ease-out;
 }
 
-/* 箭头样式 */
-.tooltip::after {
+/* 深色主题 */
+.tooltip[data-theme="dark"],
+.tooltip-dark {
+    background: #1f2937;
+    color: #f3f4f6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 浅色主题 */
+.tooltip[data-theme="light"],
+.tooltip-light {
+    background: #ffffff;
+    color: #374151;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+/* 箭头样式（根据主题调整颜色） */
+.tooltip[data-position]::after {
     content: '';
     position: absolute;
     width: 8px;
     height: 8px;
-    background: inherit;
-    transform: rotate(45deg);
 }
 
-/* 根据主题调整箭头颜色 */
-.tooltip-light::after {
-    background: #333;
+.tooltip[data-theme="dark"][data-position="top"]::after {
+    border-top-color: #1f2937;
 }
 
-.tooltip-dark::after {
-    background: #fff;
+.tooltip[data-theme="light"][data-position="top"]::after {
+    border-top-color: #ffffff;
 }
 
 /* 位置调整 */
