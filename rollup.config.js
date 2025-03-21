@@ -5,12 +5,12 @@ export default {
   input: 'src/core.js',
   output: [
     {
-      file: 'dist/k-tip.umd.js',
+      file: 'dist/kyeo-tip.umd.js',
       format: 'umd',
       name: 'k-tip'
     },
     {
-      file: 'dist/k-tip.esm.js',
+      file: 'dist/kyeo-tip.esm.js',
       format: 'esm'
     }
   ],
