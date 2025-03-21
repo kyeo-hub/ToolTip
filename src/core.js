@@ -1,9 +1,14 @@
 class TooltipLibrary {
     constructor(options = {}) {
+      if (typeof document === 'undefined') {
+        return; // 在服务器端不执行任何操作
+      }
+  
       this.config = {
         attribute: 'data-tip',
         position: 'top',
         offset: 8,
+        theme: 'dark',
         ...options,
       };
   
