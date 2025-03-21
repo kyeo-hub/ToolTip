@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tooltip测试</title>
+    <link rel="stylesheet" href="https://unpkg.com/kyeo-tip@1.0.1/dist/kyeo-tip.css" />
+
+  </head>
+  <body>
+    <button data-tip="这是提示" data-tip-position="top">悬停我</button>
+
+    <!-- 基础用法 -->
+    <div class='div'>
+<div>111</div>
+      <div data-tip="这是一个提示" data-tip-position="top" class="div1">悬停我</div>
+    </div>
+
+    <!-- 自定义位置 -->
+    <img
+      data-tip="图片说明"
+      data-tip-position="right"
+      src="/public/944d6e533155b09.jpg"
+    />
+
+    <!-- HTML内容 -->
+    <button data-tip data-tip-template="custom-tip" data-tip-position="top">
+      复杂提示
+    </button>
+
+    <template id="custom-tip">
+      <div class="custom-tip">
+        <h3>详细说明</h3>
+        <p>这里可以包含<strong>任何HTML内容</strong></p>
+      </div>
+    </template>
+
+    <a href="#" data-tip="这是一个链接提示" data-tip-position="bottom">链接</a
+    ><button data-tip="这是一个按钮提示" data-tip-position="bottom" >
+      悬停我
+    </button>
+
+    <div data-tip="这是一个提示" data-tip-position="bottom" data-tip-theme='light'>悬停我</div>
+
+    <script src="https://unpkg.com/kyeo-tip@1.0.1/dist/kyeo-tip.umd.js"></script>
+     <!-- <script src="./s.js"></script> -->
+    <script>
+      const tooltip = new TooltipLibrary({
+        theme: 'light',
+      });
+    </script>
+    
+    <!-- <script>
+      window.addEventListener('resize', () => {
+        if (this.tooltip.style.display === 'block') {
+          const currentTarget = document.querySelector('[data-tip][hover]');
+          currentTarget && this.showTooltip(currentTarget);
+        }
+      });
+    </script> -->
+  </body>
+</html>
