@@ -1,5 +1,5 @@
 {
-    "name": "K-tip",
+    "name": "k-tip",
     "version": "1.0.0",
     "main": "dist/K-tip.umd.js",
     "module": "dist/K-tip.esm.js",
@@ -12,7 +12,7 @@
         "javascript"
     ],
     "scripts": {
-        "build": "rollup -c && cp src/styles.css dist/K-tip.css",
+        "build": "rollup -c && cp src/styles.css dist/k-tip.css",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
