@@ -11,9 +11,10 @@ class TooltipLibrary {
       theme: 'dark',
       ...options,
     };
-    this.applyTheme(); // 新增初始化主题应用
+
     this.tooltip = null;
     this.init();
+    this.applyTheme(); // 新增初始化主题应用
 
   }
 
@@ -25,6 +26,8 @@ class TooltipLibrary {
   createTooltipElement() {
     this.tooltip = document.createElement('div');
     this.tooltip.className = 'tooltip';
+    // 添加初始隐藏样式
+    this.tooltip.style.display = 'none';
     document.body.appendChild(this.tooltip);
   }
 
@@ -57,7 +60,7 @@ class TooltipLibrary {
     const theme = this.config.theme;
     this.tooltip.classList.remove('tooltip-dark', 'tooltip-light');
     this.tooltip.classList.add(`tooltip-${theme}`);
-    
+
     // 同步data属性给CSS使用
     this.tooltip.dataset.theme = theme;
   }
@@ -67,6 +70,11 @@ class TooltipLibrary {
     this.applyTheme();
   }
   showTooltip(target) {
+    // 添加元素存在检查
+    if (!this.tooltip) {
+      console.error('Tooltip元素未正确初始化');
+      return;
+    }
     // 在显示前检查元素级主题覆盖
     const elementTheme = target.getAttribute(`${this.config.attribute}-theme`);
     if (elementTheme) {
