@@ -1,2 +1,2 @@
 # Tool-Tip
-一个JavaScript UI组件，提示。
+一个JavaScript U
