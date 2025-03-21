@@ -1,6 +1,6 @@
 {
     "name": "kyeo-tip",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "main": "dist/kyeo-tip.cjs.js",
     "module": "dist/kyeo-tip.esm.js",
     "unpkg": "dist/kyeo-tip.umd.js",
