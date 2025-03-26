@@ -13,6 +13,8 @@ class TooltipLibrary {
     };
 
     this.tooltip = null;
+    this.resizeObserver = null;
+    this.mutationObserver = null;
     this.init();
     this.applyTheme(); // 新增初始化主题应用
 
@@ -53,135 +55,170 @@ class TooltipLibrary {
         this.showTooltip(e.target);
       }
     });
+    // 监听滚动事件
+    window.addEventListener('scroll', () => {
+      if (this.tooltip.style.display === 'block') {
+        const target = document.querySelector(`[${this.config.attribute}]:hover`);
+        if (target) {
+          this.showTooltip(target);
+        }
+      }
+    });
+  }
+}
+
+// 新增主题应用方法
+applyTheme() {
+  const theme = this.config.theme;
+  this.tooltip.classList.remove('tooltip-dark', 'tooltip-light');
+  this.tooltip.classList.add(`tooltip-${theme}`);
+
+  // 同步data属性给CSS使用
+  this.tooltip.dataset.theme = theme;
+}
+// 新增主题切换方法
+setTheme(newTheme) {
+  this.config.theme = newTheme;
+  this.applyTheme();
+}
+showTooltip(target) {
+  // 添加元素存在检查
+  if (!this.tooltip) {
+    console.error('Tooltip元素未正确初始化');
+    return;
+  }
+  // 在显示前检查元素级主题覆盖
+  const elementTheme = target.getAttribute(`${this.config.attribute}-theme`);
+  if (elementTheme) {
+    this.tooltip.dataset.theme = elementTheme;
+  } else {
+    this.applyTheme(); // 恢复全局主题
+  }
+  const position =
+    target.getAttribute(`${this.config.attribute}-position`) ||
+    this.config.position;
+  const template = target.dataset.tipTemplate;
+
+  // 先设置内容
+  if (template) {
+    this.tooltip.innerHTML = document.getElementById(template).innerHTML;
+  } else {
+    this.tooltip.textContent = target.getAttribute(this.config.attribute);
   }
 
-  // 新增主题应用方法
-  applyTheme() {
-    const theme = this.config.theme;
-    this.tooltip.classList.remove('tooltip-dark', 'tooltip-light');
-    this.tooltip.classList.add(`tooltip-${theme}`);
+  // 显示元素以获取正确尺寸
+  this.tooltip.style.display = 'block';
+  this.tooltip.setAttribute('data-position', position);
 
-    // 同步data属性给CSS使用
-    this.tooltip.dataset.theme = theme;
-  }
-  // 新增主题切换方法
-  setTheme(newTheme) {
-    this.config.theme = newTheme;
-    this.applyTheme();
-  }
-  showTooltip(target) {
-    // 添加元素存在检查
-    if (!this.tooltip) {
-      console.error('Tooltip元素未正确初始化');
-      return;
-    }
-    // 在显示前检查元素级主题覆盖
-    const elementTheme = target.getAttribute(`${this.config.attribute}-theme`);
-    if (elementTheme) {
-      this.tooltip.dataset.theme = elementTheme;
-    } else {
-      this.applyTheme(); // 恢复全局主题
-    }
-    const position =
-      target.getAttribute(`${this.config.attribute}-position`) ||
-      this.config.position;
-    const template = target.dataset.tipTemplate;
+  // 强制同步布局（确保获取最新尺寸）
+  const tooltipRect = this.tooltip.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
 
-    // 先设置内容
-    if (template) {
-      this.tooltip.innerHTML = document.getElementById(template).innerHTML;
-    } else {
-      this.tooltip.textContent = target.getAttribute(this.config.attribute);
-    }
-
-    // 显示元素以获取正确尺寸
-    this.tooltip.style.display = 'block';
-    this.tooltip.setAttribute('data-position', position);
-
-    // 强制同步布局（确保获取最新尺寸）
-    const tooltipRect = this.tooltip.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-
-    // 计算基础位置（包含滚动偏移）
-    let top, left;
-    switch (position) {
-      case 'top':
-        top = targetRect.top - tooltipRect.height - this.config.offset;
-        left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
-        break;
-      case 'bottom':
-        top = targetRect.bottom + this.config.offset;
-        left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
-        break;
-      case 'left':
-        top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
-        left = targetRect.left - tooltipRect.width - this.config.offset;
-        break;
-      case 'right':
-        top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
-        left = targetRect.right + this.config.offset;
-        break;
-      default:
-        top = targetRect.top - tooltipRect.height - this.config.offset;
-        left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
-    }
-
-    // 转换为文档坐标
-    top += window.scrollY;
-    left += window.scrollX;
-
-    // 智能边界检测
-    const viewport = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-      scrollX: window.scrollX,
-      scrollY: window.scrollY,
-    };
-
-    // 水平边界
-    if (left + tooltipRect.width > viewport.scrollX + viewport.width) {
-      left = viewport.width + viewport.scrollX - tooltipRect.width - 5;
-    } else if (left < viewport.scrollX + 5) {
-      left = viewport.scrollX + 5;
-    }
-
-    // 垂直边界
-    if (top + tooltipRect.height > viewport.scrollY + viewport.height) {
-      top = viewport.height + viewport.scrollY - tooltipRect.height - 5;
-    } else if (top < viewport.scrollY + 5) {
-      top = viewport.scrollY + 5;
-    }
-
-    // 应用最终位置
-    this.tooltip.style.top = `${top}px`;
-    this.tooltip.style.left = `${left}px`;
-    // 当位置被边界检测调整后，修正箭头方向
-    const finalRect = this.tooltip.getBoundingClientRect();
-    const actualPosition = this.calculateActualPosition(targetRect, finalRect);
-    this.tooltip.setAttribute('data-position', actualPosition);
-  }
-  // 添加新方法
-  calculateActualPosition(targetRect, tooltipRect) {
-    const originalPos = this.tooltip.getAttribute('data-position');
-    const viewportCenterX = window.innerWidth / 2;
-
-    // 如果水平位置被大幅调整，自动切换左右位置
-    if (Math.abs(tooltipRect.left - targetRect.left) > targetRect.width * 2) {
-      return tooltipRect.left < viewportCenterX ? 'right' : 'left';
-    }
-    return originalPos;
+  // 计算基础位置（包含滚动偏移）
+  let top, left;
+  switch (position) {
+    case 'top':
+      top = targetRect.top - tooltipRect.height - this.config.offset;
+      left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
+      break;
+    case 'bottom':
+      top = targetRect.bottom + this.config.offset;
+      left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
+      break;
+    case 'left':
+      top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
+      left = targetRect.left - tooltipRect.width - this.config.offset;
+      break;
+    case 'right':
+      top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
+      left = targetRect.right + this.config.offset;
+      break;
+    default:
+      top = targetRect.top - tooltipRect.height - this.config.offset;
+      left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
   }
 
-  hideTooltip() {
-    this.tooltip.style.display = 'none';
+  // 转换为文档坐标
+  top += window.scrollY;
+  left += window.scrollX;
+
+  // 智能边界检测
+  const viewport = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    scrollX: window.scrollX,
+    scrollY: window.scrollY,
+  };
+
+  // 水平边界
+  if (left + tooltipRect.width > viewport.scrollX + viewport.width) {
+    left = viewport.width + viewport.scrollX - tooltipRect.width - 5;
+  } else if (left < viewport.scrollX + 5) {
+    left = viewport.scrollX + 5;
   }
 
-  // 销毁方法
-  destroy() {
-    document.body.removeChild(this.tooltip);
-    document.removeEventListener('mouseover', this.showTooltip);
-    document.removeEventListener('mouseout', this.hideTooltip);
+  // 垂直边界
+  if (top + tooltipRect.height > viewport.scrollY + viewport.height) {
+    top = viewport.height + viewport.scrollY - tooltipRect.height - 5;
+  } else if (top < viewport.scrollY + 5) {
+    top = viewport.scrollY + 5;
   }
+
+  // 应用最终位置
+  this.tooltip.style.top = `${top}px`;
+  this.tooltip.style.left = `${left}px`;
+  // 当位置被边界检测调整后，修正箭头方向
+  const finalRect = this.tooltip.getBoundingClientRect();
+  const actualPosition = this.calculateActualPosition(targetRect, finalRect);
+  this.tooltip.setAttribute('data-position', actualPosition);
+  // 初始化观察器
+  this.observeTarget(target);
+}
+observeTarget(target) {
+  // 清理之前的观察器
+  if (this.resizeObserver) this.resizeObserver.disconnect();
+  if (this.mutationObserver) this.mutationObserver.disconnect();
+
+  // 监听目标元素尺寸变化
+  this.resizeObserver = new ResizeObserver(() => {
+    this.showTooltip(target);
+  });
+  this.resizeObserver.observe(target);
+
+  // 监听目标元素属性变化
+  this.mutationObserver = new MutationObserver(() => {
+    this.showTooltip(target);
+  });
+  this.mutationObserver.observe(target, {
+    attributes: true,
+    attributeFilter: [this.config.attribute],
+  });
+}
+// 添加新方法
+calculateActualPosition(targetRect, tooltipRect) {
+  const originalPos = this.tooltip.getAttribute('data-position');
+  const viewportCenterX = window.innerWidth / 2;
+
+  // 如果水平位置被大幅调整，自动切换左右位置
+  if (Math.abs(tooltipRect.left - targetRect.left) > targetRect.width * 2) {
+    return tooltipRect.left < viewportCenterX ? 'right' : 'left';
+  }
+  return originalPos;
+}
+
+hideTooltip() {
+  this.tooltip.style.display = 'none';
+  // 清理观察器
+  if (this.resizeObserver) this.resizeObserver.disconnect();
+  if (this.mutationObserver) this.mutationObserver.disconnect();
+}
+
+// 销毁方法
+destroy() {
+  document.body.removeChild(this.tooltip);
+  document.removeEventListener('mouseover', this.showTooltip);
+  document.removeEventListener('mouseout', this.hideTooltip);
+}
 }
 
 export default TooltipLibrary
