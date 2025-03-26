@@ -65,7 +65,7 @@ class TooltipLibrary {
       }
     });
   }
-}
+
 
 // 新增主题应用方法
 applyTheme() {
